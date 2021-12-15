@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Linq;
 
 namespace SICP_course
 {
@@ -57,7 +58,7 @@ namespace SICP_course
                     Console.WriteLine(a + " False");
                 }
                 if (b > a) { int c = b + a + 2; }
-                if (a > b) { a++; a--; } else if (a < b) { b++; b--; } else { int g = -1; }
+
             }
             {
                 Func<int, int> square = x => (x * x);
@@ -175,7 +176,7 @@ namespace SICP_course
                 Console.WriteLine(PowerExpt(3, 6));
                 Console.WriteLine(); Console.WriteLine(MyPower(3, 3)); Console.WriteLine(MyPower(3, 5));
                 Console.WriteLine(); Console.WriteLine(ExpAlg(3, 3)); Console.WriteLine(ExpAlg(3, 4));
-                Console.WriteLine("Euclid algorithm: "); Console.WriteLine(Euclids(60, 36));
+                Console.WriteLine("Euclid algorithm: "); Console.WriteLine(Euclids(206, 40));
                 Console.WriteLine("Searching smallest division: ");
                 Console.WriteLine(SmallestDevisior(10));
                 Console.WriteLine("Testing Primary: ");
@@ -186,10 +187,272 @@ namespace SICP_course
                 Console.WriteLine(Smallest(199)); Console.WriteLine(SmallestDevisior(199));
                 Console.WriteLine("Value = 1999"); Console.WriteLine(Smallest(1999)); Console.WriteLine(SmallestDevisior(1999));
                 Console.WriteLine("Value = 19999"); Console.WriteLine(Smallest(19999)); Console.WriteLine(SmallestDevisior(19999));
-                Console.WriteLine(Small(199)); Console.WriteLine(Small(1999)); Console.WriteLine(Small(19999));  Print("Fermat test: ");
-                Print(FermatRun(15,3));
-                
-              
+                Console.WriteLine(Small(199)); Console.WriteLine(Small(1999)); Console.WriteLine(Small(19999)); Print("Fermat test: ");
+                Print(FermatRun(10, 10)); Console.WriteLine(); Console.WriteLine(FibForProcedure(9));
+                Console.WriteLine(SumCube(1, 10)); Console.WriteLine(SumInteger(1, 10));
+                Print(PiSumy(1, 1000) * 8); Console.WriteLine("Find Integral: ");
+                Console.WriteLine(Integral(Cube(0.21), 0, 1, 0.01));
+                Console.WriteLine("Simpson function: ");
+                Console.WriteLine(SumIter(1, 10)); Console.WriteLine("Product:  ");
+                Console.WriteLine(Product(2, 10));
+                Console.WriteLine(ProductIter(2, 10)); Console.WriteLine(ProductFactorial(5)); Console.WriteLine("Accumulate: ");
+                Console.WriteLine(Accumulate(1, 0, 4, 6)); Console.WriteLine(Evclid(206, 40));
+                Console.WriteLine("Pi Sum test : "); Console.WriteLine(PiSumy(4, 10)); Console.WriteLine(PiSumm(4, 10));
+                Console.WriteLine(Integral(14, 12, 15, 11)); Console.WriteLine(IntegralL(14, 12, 15, 11));
+                Func<int, int >sqrt =x => { return x * x; };
+                Func<int, int, int, int> L = (x, y, z) => { return 1 + 2 + sqrt(z); }; Console.WriteLine(L(1,2,3));
+               Console.WriteLine(CalcF(5, 2)); Console.WriteLine(CalcF_Labmda(5, 2)); Console.WriteLine(CalcF_Let(5, 2)); 
+                Console.WriteLine("Testing Half-interval function: ");
+                Func<double, double> calc_for_Interval = x => { return Math.Sin(x); };
+                //Console.WriteLine(HalfIntervalMethod(calc_for_Interval, 2.0, 4.0));
+                Func<double, double> exprresion = x => { return (x*x*x)- (2*x-3); };
+                Func<double, double> fix_cos = x => {return Math.Cos(x) ; };
+                Func<double, double> fix_cos_plus_sin = x => { return Math.Cos(x) + Math.Sin(x); };
+                /*Console.WriteLine(HalfIntervalMethod(exprresion, -1.0, 2.0));*/ Console.WriteLine("Finding fixed point of f: ");
+                Console.WriteLine(Search(fix_cos, 2.0, 4.0)); Console.WriteLine(halfIntervalMethod(fix_cos, 2.0,4.0));
+
+            }
+        }
+        static double halfIntervalMethod(Func<double , double> f , double a, double b)
+        {
+            Func<double, double> a_value = x => { return f(x); };
+            Func<double, double> b_value = x => { return f(x); };
+            double x1 = a_value(a);
+            double x2 = a_value(b);
+            if (x1 >0 & x2 <0)
+            {
+                return Search(f, a, b);
+            }
+            else if(x2>0 & x1<0)
+            {
+                return Search(f, b, a);
+            }
+            else
+            {
+                Console.WriteLine("Wrong sign.");
+                return 1d;
+            }
+        }
+        static double Search(Func<double, double> f, double neg_p, double pos_p)
+        {
+             
+            Func<double, double, double> average = (x, y) => { return (neg_p + pos_p) / 2; };
+            Func<Func<double, double>, double,double> test_value =(f, x) =>{ return f(x); };
+            double mid_p = average(neg_p, pos_p);
+            bool Close_Enough(double x, double y)
+            {
+                return x - y < 0.001; 
+            }
+            if (Close_Enough(neg_p, pos_p))
+            {
+                return mid_p;
+            }
+            else if (test_value(f, mid_p) > 0)
+            {
+
+                return Search(f, neg_p, mid_p);
+            }
+            else
+            {
+                return Search(f, mid_p, pos_p);
+            }  
+            
+        }
+
+        
+
+static int CalcF_Let(int x, int y)
+        {
+            Func<int, int> sqrt = x => { return x * x; };
+            Func<int, int, int> formula = (a, b) =>
+           {
+               return x * sqrt(a) + y * (b) + (a * b);
+           };
+            return formula((1 + x * y), 1 - y);
+        }
+        static int CalcF_Labmda(int x, int y )
+        {
+            Func<int, int> sqrt = x => { return x * x; };
+            Func<int, int, int> Formula = (a, b) => { return x * (sqrt(a)) + y*b  + a*b     ; };
+            return Formula((x * y) + 1, 1 - y);
+        }
+
+        static int CalcF(int x, int y)
+        {
+            
+            Func<int, int> sqrt = x => {return x * x; };
+            int f_helper(int a, int b)
+            {
+                return ((x * (sqrt(a)) + (y*b) + (a*b)));
+            }
+            return f_helper((x * y) + 1, 1 - y);
+        }
+        static double IntegralL(double f, double a, double b, double dx)
+        {
+            Func<double, double> AddX = x => { return x + dx; };
+            return SumDouble((f*(a+ (dx/2.0))),AddX(b));
+        }
+        static double PiSumm(double a, double b)
+        {
+            Func<double, double> expression = x => { return 1.0 / (x + 2) * x; };
+            Func<double, double> Add4 = x => { return x + 4; };
+            return SumDouble((expression(a)), Add4(b));
+        }
+        static int Evclid(int a, int b)
+        {      
+            if(b==0)
+            {
+                return a;
+            }
+            else
+            {
+                return Evclid (b, Devide(a,b));
+            }
+        int Devide(int a, int b)
+            {
+                return a % b;
+            }
+     
+        }
+        static int Accumulate(int combiner, int nullValue, int a, int b)
+        {
+            int Next(int a) { return a+1; }
+            if (a > b) { return combiner; }
+            else
+            {
+                return a+b +  Accumulate(combiner, nullValue, ((a * Product(Next(a), b) + (SumInteger(Next(a), b)))), b); 
+               
+            }
+        }
+        static int ProductFactorial(int n)
+        {
+           int Id(int x) { return x; }
+            int Next(int x) { return x + 1; }
+            return ProductIter(Id(1), Next(n));
+        }
+
+        static int Product(int a, int b)
+        {
+            if(a>b)
+            {
+                return 1;
+            }
+            else
+            {
+                return a * Product(a + 2, b);
+            }
+        }
+        static int ProductIter(int a,int b)
+        { return Iter(a, 1);
+            int Iter(int a, int result)
+            {
+                 if(a>b)
+                {
+                    return result;
+                }
+                else
+                {
+                    return a * Iter(a+2, result);
+                }
+            }
+        }
+
+
+        static int SumIter(int a, int b)
+        {
+            int Iter(int a, int result)
+            { 
+                if(a>b) { return result; }
+                else
+                {
+                    return Iter(a + 1, result + a);
+                }
+            }
+            return Iter(a, 0);
+        }
+        static double Integral(double f, double a, double b, double dx)
+        {
+            double AddDx(double x)
+            {
+                return x + dx;
+            }
+            return dx * SumDouble (f * (a + AddDx(b) + dx/2.0),dx);
+        }
+        static double SumDouble(double a, double b)
+        {
+            if (a > b) { return 0; }
+            else
+            {
+                return a + SumDouble(a + 1.0, b);
+            }
+        }
+        static double PiSumy(int a, int b)
+        {
+            double PiTerm(int x)
+            {
+                return (1.0 / (x * (x + 2)));
+            }
+            double PiNext(int x) { return x + 4; }
+            return SumDouble(PiTerm(a),PiNext(b));
+        }
+        static int SumInteger(int a, int b)
+        {
+            return SumofInteger(Identity(a), Inc(b));
+        }
+        static int Identity(int a)
+        {
+            return a;
+        }
+        static int Inc(int a)
+        {
+            return a++;
+        }
+        static int SumCube(int a, int b)
+        {
+            return SumOfCube(a, Inc(b));
+        }
+
+        static double PiSum(int a, int b)
+        {
+            if (a > b) { return 0; }
+            else
+            {
+                return (1.0 / a * (a + 2)) + PiSum(a + 4, b);
+            }
+        }
+        static int SumofInteger(int a, int b)
+        {
+            if (a > b) { return 0; }
+            else
+            {
+                return a + SumofInteger(a + 1, b);
+            }
+        }
+        static int SumOfCube(int a, int b)
+        {
+            Func<int, int> cube = x => x * x * x;
+            if(a>b)
+            {
+                return 0;
+            }
+            else
+            {
+                return cube(a) + SumOfCube(a + 1, b);
+            }
+        }
+        static int FibForProcedure(int value)
+        {
+            return Compute(1,0,value);
+            int Compute(int a, int b, int counter)
+            {
+                if (counter == 0)
+                {
+                    return b;
+                }
+                else
+                {
+                    return Compute((a + b), a, counter - 1);
+                }
             }
         }
         static int ModExpo(int b, int exp, int m)
@@ -737,14 +1000,7 @@ namespace SICP_course
                 Console.Write("Log = " + counter + " ");
                 return b * (ExponentLog(b, n - 1));
             }
-            Console.Write("Log = " + counter);
-        }
-        static string DisplayTime()
-        {
-            Stopwatch time = new Stopwatch();
-            TimeSpan ts = time.Elapsed;
-            string ShowElapsed = ts.Seconds.ToString() ;
-            return ShowElapsed;
+         
         }
         static int Small(int a)
         {  
